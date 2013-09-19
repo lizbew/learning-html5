@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Happy mid-au</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div >
+		<canvas id="draw" width="120" height="120"></canvas>
+	</div>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script>
+
+	function calR(r, id, od) {
+		return r * Math.sin(Math.PI * id / 180) / Math.sin(Math.PI * od / 180);
+	}
+
+	function calDx(ir, our, id, od)  {
+		return ir * Math.cos(Math.PI * id / 180) - our * Math.cos(Math.PI * od / 180)
+	}
+
+	function drawFlower2(context) {
+		context.save();
+
+		var coreRadius = 50, coreAngle = 15, edgeAngle = 60;
+		var edgeRadius = calR(coreRadius, coreAngle, edgeAngle),
+			diffX = calDx(coreRadius, edgeRadius, coreAngle, edgeAngle);
+
+		var coreDegree = Math.PI * coreAngle / 180,
+		    edgeDegree = Math.PI * edgeAngle / 180;
+
+		context.fillStyle = "rgb(233, 171, 103)";
+		context.strokeStyle = "rgb(176, 105, 21)";
+		context.translate(60, 60);
+		context.beginPath();
+		
+		for (var i = 0, c = Math.ceil(180/coreAngle); i < c; i++) {
+			context.arc(diffX, 0, Math.ceil(edgeRadius), - (Math.PI * edgeAngle / 180), (Math.PI * edgeAngle / 180), false);
+			context.rotate(coreDegree * 2);
+		}
+		context.closePath();
+		context.stroke();
+		context.fill();
+
+		context.restore();
+
+	}
+
+	
+
+
+	//var canvas = document.querySelector('canvas');
+	var canvas = $('#draw')[0];
+	var context = canvas.getContext('2d');
+
+	//drawFlower(context);
+	//drawTail(context);
+	drawFlower2(context);
+
+	//var imageData = context.getImageData(0, 0, 120, 120);
+	///context.clearRect(0, 0, 120, 120);
+	//context.rotate(1, 0.75);
+	//context.putImageData(imageData, 0, 0);
+
+	var img = new Image();
+	img.src = canvas.toDataURL();
+	context.clearRect(0, 0, 120, 120);
+
+    for (var i = 0; i < 25; i++) {
+    	context.drawImage(img, 0, 0, 120, 120, 0, 30 - i, 120, 120 * (1 - Math.sin(15 * Math.PI / 180)));	
+    }
+
+    context.save();
+    context.scale(1, 1 - Math.sin(15 * Math.PI / 180));
+    context.beginPath();
+    context.strokeStyle = "rgb(176, 105, 21)";
+    for (var i = 44; i > 10; i = i - 3) {
+    	context.arc(60, 68, i--, 0, Math.PI * 2, false);
+    	context.arc(60, 68, i--, 0, Math.PI * 2, false);
+    	context.arc(60, 68, i--, 0, Math.PI * 2, false);
+    }
+    context.moveTo(60, 68);
+    
+    context.closePath();
+    context.stroke();
+
+    context.restore();
+   /* var img2 = new Image();
+    
+    $(img2).load(function() {
+    	context.save();
+    	context.scale(1, 1 - Math.sin(15 * Math.PI / 180));
+    	context.beginPath();
+    	context.arc(60, 68, 48, 0, Math.PI * 2, false);
+    	context.clip();
+    	context.drawImage(img2, 0, 0, 522, 522, 10, 0, 100, 120);	
+    	context.restore();
+
+    	//var imageData = context2.getImageData(0, 0, 120, 120);
+    	//context.putImageData(imageData, 0, 0);
+    });
+    img2.src = "mooncak.png"; */
+
+    
+    var img3 = new Image();
+    img3.src = canvas.toDataURL();
+    $('body').append(img3);
+
+	</script>
+</body>
+</html>

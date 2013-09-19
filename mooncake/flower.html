@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Flower</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div id="draw">
+		<canvas width="500" height="500"></canvas>
+	</div>
+	<script>
+
+	function calR(r, id, od) {
+		return r * Math.sin(Math.PI * id / 180) / Math.sin(Math.PI * od / 180);
+	}
+
+	function calDx(ir, our, id, od)  {
+		return ir * Math.cos(Math.PI * id / 180) - our * Math.cos(Math.PI * od / 180)
+	}
+
+	function drawFlower(context) {
+		context.save();
+
+		var coreRadius = 50, coreAngle = 15, edgeAngle = 60;
+
+		context.fillStyle = "rgb(247, 214, 128)";
+		context.beginPath();
+		context.arc(60, 60, coreRadius, 0, Math.PI * 2, false);
+		context.closePath();
+		context.fill();
+		
+
+
+		var edgeRadius = calR(coreRadius, coreAngle, edgeAngle),
+			diffX = calDx(coreRadius, edgeRadius, coreAngle, edgeAngle);
+
+		context.translate(60, 60);
+
+		for (var i = 0, c = Math.ceil(180/coreAngle); i < c; i++) {
+
+			context.rotate(Math.PI * coreAngle * 2 / 180);
+
+			context.beginPath();
+			context.arc(Math.ceil(diffX), 0, Math.ceil(edgeRadius), 0, Math.PI * 2, false);
+			context.closePath();
+			context.fill();
+		}
+		context.restore();
+	}
+
+
+	function drawTail(context) {
+		context.save();
+
+		var coreRadius = 50, coreAngle = 15, edgeAngle = 60;
+
+		var edgeRadius = calR(coreRadius, coreAngle, edgeAngle),
+			diffX = calDx(coreRadius, edgeRadius, coreAngle, edgeAngle);
+
+		context.translate(150, 60);
+		context.fillStyle = "rgb(255, 0, 0)";
+
+		for (var i = 0, c = Math.ceil(180/coreAngle); i < c; i++) {
+			context.scale(1, 0.75);
+			context.rotate(Math.PI * coreAngle * 2 / 180);
+
+			context.beginPath();
+			context.arc(Math.ceil(diffX), 0, Math.ceil(edgeRadius), 0, Math.PI * 2, false);
+			context.closePath();
+			context.fill();
+		}
+		context.restore();
+
+
+	}
+
+
+	var canvas = document.querySelector('canvas');
+	var context = canvas.getContext('2d');
+
+	drawFlower(context);
+	drawTail(context);
+
+	</script>
+</body>
+</html>
