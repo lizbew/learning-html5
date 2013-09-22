@@ -4,16 +4,40 @@
 	<title>Customize Video Controls</title>
 	<meta charset="utf-8">
 	<style type="text/css">
+	video {
+		-moz-box-shadow: 5px 5px 5px #999;
+		-webkit-box-shadow: 5px 5px 5px #999;
+		box-shadow: 5px 5px 5px #999;
+	}
 	#progressBar {
+		margin-top: 10px;
+		margin-bottom: 10px;
 		border: 1px solid #aaa;
 		color: #fff;
 		width: 640px;
 		height: 20px;
+
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		border-radius: 10px;
 	}
+
+	#progressBar span {
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		border-radius: 10px;
+	}
+
 	#played {
 		background-color: #aaa;
 		height: 20px;
 		display: inline-block;
+	}
+
+	button {
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
 	}
 	</style>
 </head>
@@ -22,6 +46,7 @@
 		<video controls>
 			<source src="wave.webm" type="video/webm">
 			<source src="wave.ogv" type="video/ogg">
+			<a href="wave.webm" title="download wave.webm">Download</a>
 		</video>
 		<div id="progressBar"><span id="played"></span></div>
 		<div id="controls">
