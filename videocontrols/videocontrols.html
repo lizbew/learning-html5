@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Customize Video Controls</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+	#progressBar {
+		border: 1px solid #aaa;
+		color: #fff;
+		width: 640px;
+		height: 20px;
+	}
+	#played {
+		background-color: #aaa;
+		height: 20px;
+		display: inline-block;
+	}
+	</style>
+</head>
+<body>
+	<div>
+		<video controls>
+			<source src="wave.webm" type="video/webm">
+			<source src="wave.ogv" type="video/ogg">
+		</video>
+		<div id="progressBar"><span id="played"></span></div>
+		<div id="controls">
+			<button id="playpause" title="play" onclick="togglePlay()">play</button>
+			<button id="stop" title="stop" onclick="stopVideo()">stop</button>
+			<button id="rewind" title="reverse" onclick="changePlaybackSpeed('-');">&laquo;</button>
+			<button id="ffwd" title="fast forward" onclick="changePlaybackSpeed('+');">&raquo;</button>
+			<button id="volumeDown" title="-" onclick="changeVolume('-')">-</button>
+			<button id="volumeUp" title="+" onclick="changeVolume('+')">+</button>
+			<button id="mute" title="mute" onclick="toggleMute()">mute</button>
+		</div>
+	</div>
+	<script>
+	var video = document.getElementsByTagName("video")[0];
+	video.controls = false;
+
+	video.addEventListener('play', function() {
+		ppbutton.title = "pause";
+		ppbutton.innerHTML = "pause";
+	}, false);
+	video.addEventListener('pause', function() {
+		ppbutton.title = "play";
+		ppbutton.innerHTML = "play";
+	}, false);
+	video.addEventListener('ended', function() {
+		this.pause();
+	}, false);
+	video.addEventListener('volumechange', function() {
+		var mute = document.getElementById("mute");
+		if (video.muted) {
+			mute.title = "unmute";
+			mute.innerHTML = "unmute";
+		} else {
+			mute.title = "mute";
+			mute.innerHTML = "mute";
+		}
+	}, false);
+	video.addEventListener('timeupdate', updateProgress, false);
+
+	function stopVideo() {
+		video.pause();
+		video.currentTime = 0;
+	}
+
+	var ppbutton = document.getElementById("playpause");
+	function togglePlay() {
+		if (video.paused || video.ended) {
+			if (video.ended) video.currentTime = 0;
+			video.play();
+		} else {
+			video.pause();
+		}
+	}
+
+	function changeVolume(direction) {
+		var volume = Math.floor(video.volume * 10) / 10;
+		video.muted = false;
+		if (direction == '-') {
+			if (volume <= 0.1) video.volume = 0;
+			else video.volume -= 0.1;
+		} else {
+			if (volume >= 0.9) video.volume = 1;
+			else video.volume += 0.1;
+		}
+	}
+
+	function toggleMute() {
+		var mute = document.getElementById("mute");
+		if (video.muted) {
+			mute.title = "mute";
+			mute.innerHTML = "mute";
+			video.muted = false;
+		} else {
+			mute.title = "unmute";
+			mute.innerHTML = "unmute";
+			video.muted = true;
+		}
+	}
+
+	function updateProgress() {
+		var value = 0;
+		if (video.currentTime > 0) {
+			value = Math.floor((100/video.duration) * video.currentTime);
+		}
+		document.getElementById("played").style.width = value + "%";
+	}
+
+	function changePlaybackSpeed(direction) {
+		if (video.playbackRate != undefined) {
+			if (direction == '-') video.playbackRate -= 1;
+			else video.playbackRate += 1;
+		} else {
+			if (direction == '-') video.currentTime -= 1;
+			else video.currentTime += 1;
+		}
+	}
+
+	var progressBar = document.getElementById('progressBar');
+	progressBar.addEventListener('mouseup', function(e) {
+		setPlayPosition(e.pageX);
+	}, false);
+
+	function setPlayPosition(x) {
+		var progressBar = document.getElementById('progressBar');
+		var value = (x - findPos(progressBar)).toFixed(2);
+		var timeToSet = ((video.duration/progressBar.offsetWidth).toFixed(2) * value).toFixed(2);
+		video.currentTime = timeToSet;
+	}
+	function findPos(obj) {
+		var curleft = 0;
+		if (obj.offsetParent) {
+			do {curleft += obj.offsetLeft;} 
+			while (obj = obj.offsetParent);
+		}
+		return curleft;
+	}
+
+	</script>
+</body>
+</html>
