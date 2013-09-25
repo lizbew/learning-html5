@@ -3,6 +3,7 @@
 <head>
 	<title>Customize Video Controls</title>
 	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="playr.css">
 	<style type="text/css">
 	video {
 		-moz-box-shadow: 5px 5px 5px #999;
@@ -40,17 +41,20 @@
 		border-radius: 5px;
 	}
 	</style>
+	<script type="text/javascript" src="playr.js"></script>
 </head>
 <body>
 	<div>
-		<video controls>
+		<video class="playr_video" preload="auto" width="640" height="480" controls autoplay>
 			<source src="wave.webm" type="video/webm">
+			<source src="wave.mp4" type="video/mp4">
 			<source src="wave.ogv" type="video/ogg">
 			<a href="wave.webm" title="download wave.webm">Download</a>
+			<track src="en.vvt" kind="subtitles" srclang="en" label="English" default />
 		</video>
 		<div id="progressBar"><span id="played"></span></div>
 		<div id="controls">
-			<button id="playpause" title="play" onclick="togglePlay()">play</button>
+			<button id="playpause" title="play" onclick="togglePlay()" tabindex="2">play</button>
 			<button id="stop" title="stop" onclick="stopVideo()">stop</button>
 			<button id="rewind" title="reverse" onclick="changePlaybackSpeed('-');">&laquo;</button>
 			<button id="ffwd" title="fast forward" onclick="changePlaybackSpeed('+');">&raquo;</button>
@@ -62,6 +66,10 @@
 	<script>
 	var video = document.getElementsByTagName("video")[0];
 	video.controls = false;
+
+	video.addEventListener('loadedmetadata', function() {
+		
+	});
 
 	video.addEventListener('play', function() {
 		ppbutton.title = "pause";
@@ -163,7 +171,6 @@
 		}
 		return curleft;
 	}
-
 	</script>
 </body>
 </html>
