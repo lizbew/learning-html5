@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Head Photo</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+	.bg {
+		background-color: rgb(150, 150, 150);
+		text-align: center;
+		padding: 10px;
+	}
+	.photo {
+		display: block;
+		width: 150px;
+		height: 150px;
+		background: url(img/1.jpg) no-repeat left top;
+		border: solid 3px rgb(255, 255, 255);
+		-webkit-border-radius: 10em;
+		-moz-border-radius: 10em;
+		border-radius: 10em;
+
+		-webkit-box-shadow: 0 1px 0 rgba(0,0,0, .2);
+		-moz-box-shadow: 0 1px 0 rgba(0,0,0, .2);
+		box-shadow: 0 1px 0 rgba(0,0,0, .2);
+	}
+
+	.photo img {
+		opacity: 0;
+	}
+	</style>
+</head>
+<body>
+	<div class="bg">
+		<span class="photo">
+			<img src="img/1.jpg" width="150" height="150" >
+		</span>
+	</div>
+</body>
+</html>
