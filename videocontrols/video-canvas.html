@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Customize Video Controls</title>
+	<meta charset="utf-8" />
+</head>
+<body>
+	<div>
+		<canvas id="myCanvas" width="640" height="480">
+			<video id="myVideo" width="640" height="480" controls="true">
+				<source src="wave.webm" type="video/webm">
+				<source src="wave.mp4" type="video/mp4">
+				<source src="wave.ogv" type="video/ogg">
+			</video>
+		</canvas>
+		<div>
+			<button id="play">Play</button>
+			<button id="stop">Stop</button>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+	var video = document.getElementById('myVideo');
+	document.getElementById('play').addEventListener('click', function(e) {
+		video.play();
+	}, false);
+	document.getElementById('stop').addEventListener('click', function(e) {
+		video.pause();
+	}, false);
+
+	video.addEventListener('play', function(e) {
+		drawCanvas();
+	}, false);
+
+	var canvas = document.getElementById('myCanvas');
+	var context = canvas.getContext('2d');
+
+	function drawCanvas() {
+		if(video.paused || video.ended) {
+			return false;
+		}
+
+		context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+		var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+		var pixels = imageData.data;
+
+		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		var numTileRows = 36;
+		var numTileCols = 64;
+		var tileWidth = imageData.width / numTileCols;
+		var tileHeight = imageData.height / numTileRows;
+
+		for (var r = 0; r < numTileRows; r++) {
+			for (var c = 0; c < numTileCols; c++) {
+				var x = (c * tileWidth) + (tileWidth / 2);
+				var y = (r * tileHeight) + (tileHeight / 2);
+
+				var pos = (Math.floor(y) * (imageData.width * 4)) + (Math.floor(x) * 4);
+
+				var red = pixels[pos];
+				var green = pixels[pos + 1];
+				var blue = pixels[pos + 2];
+
+				context.fillStyle = "rgb("+red+","+green+","+blue+")";
+				context.fillRect(x - (tileWidth/2), y - (tileHeight/2), tileWidth, tileHeight);
+			}
+		}
+		setTimeout(drawCanvas, 30);
+	}
+	</script>
+</body>
+</html>
