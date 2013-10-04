@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Customize Video Controls</title>
+	<meta charset="utf-8" />
+</head>
+<body>
+	<div>
+		<canvas id="myCanvas"></canvas>
+		<div>
+			<button id="startAnimation">Start</button>
+			<button id="stopAnimation">Stop</button>
+		</div>
+	</div>
+	<script src="../js/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	var canvas = $('#myCanvas');
+	var context = canvas.get(0).getContext('2d');
+	var canvasWidth = canvas.width(), canvasHeight = canvas.height();
+
+	var playAnimation = true,
+		startButton = $('#startAnimation'),
+		stopButton = $('#stopAnimation');
+
+	startButton.hide();
+	startButton.click(function() {
+		$(this).hide();
+		stopButton.show();
+
+		playAnimation = true;
+		animate();
+	});
+	stopButton.click(function() {
+		$(this).hide();
+		startButton.show();
+
+		playAnimation = false;
+		
+	});
+
+	var Shape = function(x, y, width, height) {
+		this.x = x;
+		this.y = y;
+
+		this.width = width;
+		this.height = height;
+
+		this.reverseX = false;
+		this.reverseY = false;
+	};
+	var shapes = new Array();
+	for (var i = 0; i < 10; i++) {
+		var x = Math.random() * 250;
+		var y = Math.random() * 250;
+		var width = height = Math.random() * 20;
+
+		shapes.push(new Shape(x, y, width, height));	
+	}
+
+	var Clock = function(x, y, radius) {
+		this.x = x;
+		this.y = y;
+		this.radius = radius;
+		this.angle = 0;
+
+		this.pX = this.x + radius;
+		this.pX = this.y;
+	
+		this.updatePos = function() {
+			this.pX = this.x + this.radius * Math.cos(this.angle * (Math.PI / 180));
+			this.pY = this.y + this.radius * Math.sin(this.angle * (Math.PI / 180));
+
+			this.angle += 5;
+			if (this.angle > 360) {
+				this.angle = 0;
+			}
+		};
+	};
+	var clock = new Clock(canvasWidth / 2, canvasHeight / 2, 30);
+
+	function animate() {
+		context.clearRect(0, 0, canvasWidth, canvasHeight);
+		var shapesLength = shapes.length;
+		for (var i = 0; i < shapesLength; i++) {
+			var tmpShape = shapes[i];
+			//tmpShape.x++;
+			//tmpShape.x += Math.random() * 4 - 2;
+			//tmpShape.y += Math.random() * 4 - 2;
+			if (tmpShape.x < 0) {
+				tmpShape.reverseX = false;
+			} else if (tmpShape.x + tmpShape.width > canvasWidth){
+				tmpShape.reverseX = true;
+			}
+
+			if (tmpShape.y < 0) {
+				tmpShape.reverseY = false;
+			} else if (tmpShape.y + tmpShape.height > canvasHeight){
+				tmpShape.reverseY = true;
+			}
+
+			if (!tmpShape.reverseX) {
+				tmpShape.x += 2;
+			} else {
+				tmpShape.x -= 2;
+			}
+			if (!tmpShape.reverseY) {
+				tmpShape.y += 2;
+			} else {
+				tmpShape.y -= 2;
+			}
+
+			context.fillRect(tmpShape.x, tmpShape.y, tmpShape.width, tmpShape.height);
+		}
+
+		clock.updatePos();
+		context.fillRect(clock.pX, clock.pY, 10, 10);
+
+		if (playAnimation) {
+			setTimeout(animate, 33);
+		}
+	}
+	animate();
+	</script>
+</body>
+</html>
