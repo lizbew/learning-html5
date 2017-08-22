@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+  </head>
+  <body>
+    <h1>jQuery Flow Code</h1>
+    <div id="main" class="container">
+      <div id="step-1">
+        <form name="form1">
+          <div class="form-group">
+            <label for="flow-module-select">Module</label>
+            <select class="form-control" id="flow-module-select">
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="flow-method-select">Method</label>
+            <select class="form-control" id="flow-method-select">
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="flow-params-input">Params</label>
+            <input type="email" class="form-control" id="flow-params-input" placeholder="params">
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h4 class="card-header">Display</h4>
+        <div class="card-body">
+          <p class="card-text" id="result-block"></p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.bootcss.com/lodash.js/4.17.4/lodash.js"></script>
+
+    <script>
+
+    var module_method_map = {
+      'module_a': ['method_a1', 'method_a2','method_a3','method_a4',],
+      'module_b': ['method_b1', 'method_b2','method_b3','method_b4',],
+      'module_c': ['method_c1', 'method_c2','method_c3','method_c4',],
+      'module_d': ['method_d1', 'method_d2','method_d3','method_d4',],
+    };
+
+    function debug(msg){
+      if (true) {
+        console.log(msg);
+      }
+    }
+
+    function queryModuleList() {
+      var dfd = jQuery.Deferred();
+      setTimeout(function(){
+        dfd.resolve( Object.keys(module_method_map) );
+      }, 500 );
+
+      return dfd.promise(); 
+    }
+
+    function queryMethodListByModule(module) {
+      var dfd = jQuery.Deferred();
+      setTimeout(function(){
+        dfd.resolve( module_method_map[module] );
+      }, 500 );
+
+      return dfd.promise(); 
+    }
+
+    function bindDomHandler() {
+      var m = {
+        '#flow-module-select': 'changeModule',
+        '#flow-method-select': 'changeMethod',
+        '#flow-params-input': 'changeParams',
+      }
+
+      $.each(m, function(k,v){
+        $(k).change(function(){
+          $('#step-1').trigger(v);
+        });
+      });
+    }
+
+    function bindEventbusHandler() {
+      $('#step-1').bind('changeModule', function(){
+        debug('event: changeModule');
+        FlowData.onModuleChanged();
+      });
+
+      $('#step-1').bind('changeMethod', function(){
+        debug('event: changeMethod');
+        FlowData.onMethodChanged();
+      });
+
+      $('#step-1').bind('changeParams', function(){
+        debug('event: changeParams');
+        FlowData.onParamsChanged();
+      });
+
+    }
+
+    var FlowData = function() {
+    }
+
+    FlowData.initModule = function() {
+      queryModuleList().then(function(data){
+        var options = _.map(data, function(e){
+          return '<option>' + e + '</option>';
+        });
+        $('#flow-module-select').html(options);
+        $('#step-1').trigger('changeModule');
+      });
+    }
+
+    FlowData.onModuleChanged = function() {
+      this.initMethod();
+    }
+
+    FlowData.initMethod = function() {
+
+      var module = $('#flow-module-select').val();
+      queryMethodListByModule(module).then(function(data) {
+        var options = _.map(data, function(e){
+          return '<option>' + e + '</option>';
+        });
+        $('#flow-method-select').html(options);
+        $('#step-1').trigger('changeMethod');
+      })
+    }
+
+    FlowData.onMethodChanged = function() {
+      this.initParams();
+    }
+
+ 
+
+    FlowData.initParams = function() {
+      $('#flow-params-input').val('');
+      $('#step-1').trigger('changeParams');
+    }
+
+    FlowData.onParamsChanged = function() {
+      this.renderBlock();
+    }
+
+    FlowData.renderBlock = function() {
+      var mo = $('#flow-module-select').val();
+      var me = $('#flow-method-select').val();
+      var p = $('#flow-params-input').val();
+
+      var t = mo + '.' + me + ' (' + p + ')';
+
+      $('#result-block').text(t);
+    }
+
+    function initPage() {
+      bindDomHandler();
+      bindEventbusHandler();
+      FlowData.initModule();
+    }
+
+    initPage();
+
+
+    </script>
+  </body>
+</html>
